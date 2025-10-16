@@ -6,7 +6,9 @@ import noteService from './services/notes'
 
 const App = () => {
   const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('')
+  // const [newNote, setNewNote] = useState('')
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
 
@@ -16,19 +18,46 @@ const App = () => {
     })
   }, [])
 
-  const addNote = event => {
-    event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      important: Math.random() > 0.5
-    }
+  // const addNote = event => {
+  //   event.preventDefault()
+  //   // const noteObject = {
+  //   //   content: newNote,
+  //   //   important: Math.random() > 0.5
+  //   // }
   
 
-    noteService.create(noteObject).then(returnedNote => {
-      setNotes(notes.concat(returnedNote))
-      setNewNote('')
+  //   noteService.create(noteObject).then(returnedNote => {
+  //     setNotes(notes.concat(returnedNote))
+  //   })
+  // } 
+  const addPerson = (event) => {
+    event.preventDefault()
+
+    if(!newName.trim() || !newNumber.trim()) {
+      setErrorMessage('name and number are required')
+      setTimeout(() => setErrorMessage(null), 5000)
+      return
+    }
+
+    const personObject = {
+      id: notes.length + 1,
+      name: newName.trim(),
+      number: newNumber.trim()
+    }
+
+    noteService.create(personObject)
+      .then( (returnedPerson) => {        
+        if (Array.isArray(returnedPerson)) setNotes(returnedPerson)
+        else setNotes(notes.concat(returnedPerson))
+
+        setNewName('')
+        setNewNumber('')
+    }).catch( (error) => {
+      setErrorMessage(error.response?.data?.error || error.message)
+      setTimeout(() => setErrorMessage(null, 5000))
     })
-  } 
+  }
+
   const toggleImportanceOf = id => {
     const note = notes.find(n => n.id === id)
     const changedNote = {...note, important: !note.important}
@@ -49,9 +78,9 @@ const App = () => {
       })
   }
 
-  const handleNoteChange = event => {
-    setNewNote(event.target.value)
-  }
+  // const handleNoteChange = event => {
+  //   setNewNote(event.target.value)
+  // }  
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important)
 
@@ -73,10 +102,22 @@ const App = () => {
           />
         ))}
       </ul>
-      <form onSubmit={addNote}>
+      <h2>Add a New Person</h2>
+      <form onSubmit={addPerson}>
+        <div>
+          name: <input value={newName} onChange={(e) => setNewName(e.target.value)} />
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={(e) => setNewNumber(e.target.value)} />
+        </div>
+        <div>
+          <button type='submit'>add</button>
+        </div>
+      </form>
+      {/* <form onSubmit={addNote}>
         <input value={newNote} onChange={handleNoteChange} />
         <button type='submit'>save</button>
-      </form>
+      </form> */}
       <Footer />
     </div>
   )

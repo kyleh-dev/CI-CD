@@ -4,9 +4,9 @@ h1 {
 }
 
 li {
-  color: grey;
-  padding-top: 3px;
+  color: black;
   font-size: 15px;
+  padding: 5px;
 }
 
 .error {
@@ -18,3 +18,4 @@ li {
   padding: 10px;
   margin-bottom: 10px;
 }
+

@@ -1,6 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const path = require('path')
 const app = express()
 
 app.use(express.json())
@@ -102,6 +103,18 @@ app.post('/api/persons', (req, res) => {
 	phoneBookEntries = phoneBookEntries.concat(newEntry)
 	res.json(phoneBookEntries)
 })
+
+// Serve static frontend build (if present)
+const distPath = path.join(__dirname, 'dist')
+if (require('fs').existsSync(distPath)) {
+	app.use(express.static(distPath))
+
+	// SPA fallback: for any non-API route, serve index.html
+	app.get('*', (req, res, next) => {
+		if (req.path.startsWith('/api') || req.path.startsWith('/info')) return next()
+		res.sendFile(path.join(distPath, 'index.html'))
+	})
+}
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

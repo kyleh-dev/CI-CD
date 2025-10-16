@@ -16,6 +16,11 @@ const midWare1 = (req, res, next) => {
 
 app.use(midWare1)
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :context'))
+app.use(express.static(path.join(__dirname, 'dist')));
+
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 let phoneBookEntries = [
 	{ 
@@ -104,17 +109,7 @@ app.post('/api/persons', (req, res) => {
 	res.json(phoneBookEntries)
 })
 
-// Serve static frontend build (if present)
-const distPath = path.join(__dirname, 'dist')
-if (require('fs').existsSync(distPath)) {
-	app.use(express.static(distPath))
 
-	// SPA fallback: for any non-API route, serve index.html
-	app.get('*', (req, res, next) => {
-		if (req.path.startsWith('/api') || req.path.startsWith('/info')) return next()
-		res.sendFile(path.join(distPath, 'index.html'))
-	})
-}
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

@@ -16,11 +16,11 @@ const midWare1 = (req, res, next) => {
 
 app.use(midWare1)
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :context'))
-app.use(express.static(path.join(__dirname, 'dist')));
+// app.use(express.static(path.join(__dirname, 'dist')));
 
-app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+// app.get(/^\/(?!api).*/, (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// });
 
 let phoneBookEntries = [
 	{ 

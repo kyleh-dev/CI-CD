@@ -1,5 +1,34 @@
 const express = require('express')
+const mongoose = require('mongoose')
 const app = express()
+
+if (process.argv.length < 3) {
+  console.log("Password is required and hasn't been given.");
+  process.exit(1)
+}
+
+// const password = process.argv[2]
+// const url = `mongodb+srv://kyle:${password}@cluster117.yaa9ruv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster117`
+const url = process.env.MONGODB_URI;
+
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean
+})
+
+//removes _id, __v object and string from the json data in MongoDB.
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+const Note = mongoose.model('Note', noteSchema)
 
 app.use(express.json())
 
@@ -33,7 +62,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-    response.json(notes)
+    Note.find({}).then(notes => {
+      response.json(notes)
+    })
 })
 
 app.get('/api/notes/:id', (request, response) => {

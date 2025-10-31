@@ -18,7 +18,10 @@ const errorHandler = (error, req, res, next) => {
 	console.error(error);
 
 	if (error.name === "CastError") return res.status(400).send({error: 'Malformatted ID'})
-	else if (error.name === "ValidationError") return res.status(400).json({error: 'Validation Error'})
+	else if (error.name === "ValidationError") {
+		const messages = Object.values(error.errors).map(e => e.message)
+		return res.status(400).json({error: messages.join(', ')})
+	}
 	next(error);
 };
 
@@ -144,7 +147,7 @@ app.post('/api/persons', async (req, res, next) => {
 	// res.json(phoneBookEntries)
 	newEntry.save()
 	.then(result => res.json(result))
-	.error(err => next(err));
+	.catch(err => next(err));
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -153,12 +156,14 @@ app.put('/api/persons/:id', (req, res, next) => {
 
 	Entry.findById(id)
 	.then(entry => {
-		if (!entry) return res.status(404);
+		if (!entry) return res.status(404).end();
 
 		entry.name = name;
 		entry.number = number;
 
-		return entry.save().then(updatedEntry => console.log(updatedEntry)).catch(err => next(err));
+		return entry.save()
+		.then(updatedEntry => res.json(updatedEntry))
+		.catch(next);
 	})
 })
 

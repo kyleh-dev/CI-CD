@@ -43,9 +43,9 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id'})
+    return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message})
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
@@ -74,7 +74,7 @@ let notes = [
 ]
 
 const generateId = () => {
-  const maxId = notes.length > 0 
+  const maxId = notes.length > 0
     ? Math.max(...notes.map(note => Number(note.id)))
     : 0
   return String(maxId + 1);
@@ -93,7 +93,7 @@ app.get('/api/notes', (request, response) => {
   })
 })
 
-app.get('/api/notes/:id', (request, response) => {
+app.get('/api/notes/:id', (request, response, next) => {
   const id = request.params.id;
   Note.findById(id)
   .then(note => {
@@ -107,13 +107,13 @@ app.get('/api/notes/:id', (request, response) => {
   })
 })
 
-app.delete('/api/notes/:id', (request, response) => {
+app.delete('/api/notes/:id', (request, response, next) => {
   // const id = request.params.id
   // notes = notes.filter(note => note.id !== id)
   // response.status(204).end()
 
   Note.findByIdAndDelete(request.params.id)
-  .then(note => {
+  .then( () => {
     response.status(204).end()
   })
   .catch(err => {
@@ -168,7 +168,7 @@ app.put('/api/notes/:id', (request, response, next) => {
 })
 
 const unknownEndPoint = (request, response) => {
-  response.status(404).send({error: 'unknown endpoint'})
+  response.status(404).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndPoint);

@@ -2,8 +2,8 @@ import axios from 'axios'
 // Read Vite's `import.meta.env.VITE_API_ROOT` when running in the browser/dev server.
 // When this module is executed directly with Node (for quick tests), `import.meta.env`
 // can be undefined, so fall back to process.env.VITE_API_ROOT and then to a default.
-const apiRoot = import.meta?.env?.VITE_API_ROOT  ?? 'http://localhost:3001'
-const baseUrl = `${apiRoot}/api/persons`
+// const apiRoot = import.meta?.env?.VITE_API_ROOT  ?? 'http://localhost:3001'
+const baseUrl = '/api/notes'
 
 axios.get(baseUrl).then(res => console.log(res.data))
 

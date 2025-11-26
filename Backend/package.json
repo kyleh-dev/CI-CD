@@ -7,17 +7,26 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "node indexExercise3-V2.js",
-    "dev": "node --watch indexExercise3-V2.js",
+    "start": "node indexEx-5.js",
+    "dev": "node --watch indexEx-5.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf dist && npm install && cd ../part2-notes-frontend && npm install && npm run build && cp -r dist ../backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "start:test": "cross-env NODE_ENV=test node --watch indexEX-5.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
     "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@stylistic/eslint-plugin-js": "^4.4.1",
+    "eslint": "^9.39.0",
+    "globals": "^16.5.0"
   }
 }

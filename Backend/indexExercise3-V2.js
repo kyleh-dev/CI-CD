@@ -3,30 +3,30 @@ const express = require('express')
 const Entry = require('./models/phoneBook')
 const morgan = require('morgan')
 const cors = require('cors')
-const path = require('path')
+// const path = require('path')
 const app = express()
 
 const requestLogger = (req, res, next) => {
-	console.log('Method: ', req.method);
-	console.log('Path: ', req.path);
-	console.log('Body: ', req.body);
-	console.log('---');
+  console.log('Method: ', req.method)
+  console.log('Path: ', req.path)
+	console.log('Body: ', req.body)
+	console.log('---')
 	next()
 };
 
 const errorHandler = (error, req, res, next) => {
-	console.error(error);
+  console.error(error)
 
-	if (error.name === "CastError") return res.status(400).send({error: 'Malformatted ID'})
-	else if (error.name === "ValidationError") {
+	if (error.name === 'CastError') return res.status(400).send({ error: 'Malformatted ID' })
+	else if (error.name === 'ValidationError') {
 		const messages = Object.values(error.errors).map(e => e.message)
-		return res.status(400).json({error: messages.join(', ')})
+		return res.status(400).json({ error: messages.join(', ') })
 	}
 	next(error);
 };
 
 const unknownEndPoint = (req, res) => {
-	res.status(404).send({error: 'unknown endpoint'});
+	res.status(404).send({ error: 'unknown endpoint' });
 }
 
 app.use(express.json())
@@ -49,25 +49,25 @@ morgan.token('context', (req) => JSON.stringify(req.body))
 // });
 
 let phoneBookEntries = [
-	{ 
-			"id": "1",
-			"name": "Arto Hellas", 
-			"number": "040-123456"
+	{
+		"id": "1",
+		"name": "Arto Hellas",
+		"number": "040-123456"
 	},
-	{ 
-			"id": "2",
-			"name": "Ada Lovelace", 
-			"number": "39-44-5323523"
+	{
+		"id": "2",
+		"name": "Ada Lovelace",
+		"number": "39-44-5323523"
 	},
-	{ 
-			"id": "3",
-			"name": "Dan Abramov", 
-			"number": "12-43-234345"
+	{
+		"id": "3",
+		"name": "Dan Abramov",
+		"number": "12-43-234345"
 	},
-	{ 
-			"id": "4",
-			"name": "Mary Poppendieck", 
-			"number": "39-23-6423122"
+	{
+		"id": "4",
+		"name": "Mary Poppendieck",
+		"number": "39-23-6423122"
 	}
 ]
 
@@ -109,19 +109,19 @@ app.delete('/api/persons/:id', (req, res, next) => {
 	// res.json(phoneBookEntries)
 	const id = req.params.id;
 	Entry.findByIdAndDelete(id)
-	.then(result => res.status(204).end())
+	.then(() => res.status(204).end())
 	.catch(err => next(err))
 })
 
 app.post('/api/persons', async (req, res, next) => {
 	const body = req.body;
 	// const findName = phoneBookEntries.find(entry => body.name === entry.name)
-	
+
 	if(!body.name) {
 		return res.status(400).json({
 			error: 'name missing'
 		})
-	} 
+	}
 	else if (!body.number) {
 		return res.status(400).json({
 			error: 'number missing'
@@ -132,8 +132,8 @@ app.post('/api/persons', async (req, res, next) => {
 	// 		error: 'name must be unique'
 	// 	})
 	// }
-	
-	// let id 
+
+	// let id
 	// do {
 	// 	id = Math.floor(Math.random() * 10000).toString()
 	// } while(phoneBookEntries.find(entry => entry.id === id))
@@ -152,7 +152,7 @@ app.post('/api/persons', async (req, res, next) => {
 
 app.put('/api/persons/:id', (req, res, next) => {
 	const id = req.params.id;
-	const {name, number} = req.body;
+	const { name, number } = req.body;
 
 	Entry.findById(id)
 	.then(entry => {
